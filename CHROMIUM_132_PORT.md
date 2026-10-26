@@ -5,6 +5,40 @@ what was measured and what the porting recipe is, so the work does not have to b
 
 Measured on 2025-10-26 against `kiwibrowser/src.next`.
 
+## "But upstream is on 137?" — no source for it
+
+The number **137.0.7337.0** is the *version of the last shipped Kiwi Next binary*, not a public
+source baseline. Verified on 2025-10-26:
+
+| check | result |
+| --- | --- |
+| all refs of `kiwibrowser/src.next` containing `137` | **none** |
+| branches | `kiwi` (105 delta), `chromium` (132 mirror, 2025-01-20), `chromium_132.0.6834.83`, one dependabot branch |
+| `chromium` branch HEAD | `c4ac1ae` — `[Chromium] Update version 107.0.5304.17 to 132.0.6834.83`, 2025-01-20 |
+| `kiwi` branch HEAD | `7be7edd` — README/deprecation only, 2025-04-08 |
+| README's "latest published version" tag `14310011181` | `CHROMIUM_VERSION` = **105.0.5195.24** |
+| `kiwibrowser` account repos | `src.next` is the only browser source repo; nothing on 137 |
+
+So the public source stopped at a 105 delta over a 132 mirror, while the **binary** releases went
+further. Nobody forked "137" wrongly: there is nothing to fork. Forks of `src.next` that are not on
+105 either mirror 132 or are independent revivals — not official Kiwi:
+
+| repo | `CHROMIUM_VERSION` | note |
+| --- | --- | --- |
+| `BigRay1337/kiwi-browser-extension` | 137.0.7337.0 | its README states 137.0.7337.0 is the final *published* Kiwi Next release |
+| `raihanbhaii/kiwi-reborn` | 148.0.7778.96 | independent revival |
+| `danosito/afterbird` | 151.0.7922.38 | independent revival |
+| `Facilitat-dev/kiwi-browser` | 153.0.8010.39 | "Kiwi lineage, Afterbird engine", has `cursor/lemur-*` branches |
+| `Relixor/Relixor`, `pufferfish101007/kiwibrowser`, `misterfrankw/src.next`, `ferelking242/eterna-browser`, `GPLCodeHub/browser.next` | 105.0.5195.24 | plain forks |
+
+A fork lacking `chromium` / `chromium_132.0.6834.83` costs nothing: add the upstream remote and fetch,
+no re-fork needed.
+
+```bash
+git remote add upstream https://github.com/kiwibrowser/src.next.git
+git fetch --unshallow --filter=blob:none upstream chromium   # ~10k files, ~100 MB
+```
+
 ## What upstream actually provides
 
 | ref | content | version |
