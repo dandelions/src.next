@@ -91,6 +91,7 @@ public class AppMenuTest extends BlankUiTestActivityTestCase {
     }
 
     private void setUpTestOnUiThread() {
+        AppMenuHandlerImpl.setLemurMenuEnabledForTesting(false);
         mLifecycleDispatcher = new TestActivityLifecycleDispatcher();
         mDelegate = new TestAppMenuDelegate();
         mTestMenuButtonDelegate = new TestMenuButtonDelegate();
