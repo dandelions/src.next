@@ -72,6 +72,35 @@ The script is idempotent and repairs conflicts by marker matching. If a rebase m
 anchor it fails loudly with the file name and anchor it was looking for, instead of
 silently producing a half-patched tree.
 
+## How close is this to the real Lemur? (third-party audit)
+
+`Facilitat-dev/kiwi-browser`, branch `cursor/lemur-behavior-audit-a4fd`, adds a single 352-line
+document (`docs/LEMUR-AUDIT.md`) — **behaviour spec only, no code** — auditing the closed-source
+Lemur Browser (`com.lemurbrowser.exts`) from public sources (Play listing, Reddit/XDA, APKMirror
+changelogs, privacy policies, Exodus Privacy). Their own constraint: no APK was downloaded or
+decompiled, nothing copied. So there is **no code overlap with this branch**, and nothing to merge.
+
+What it does give us is a reality check on what "Lemur style" means. Per that audit the real
+product is:
+
+* **two** overflow menus (a Play review calls the split confusing; the audit deliberately skips it
+  and ships one menu);
+* bottom-weighted chrome for years, with a top-address-bar mode only added in 2.7.5.007;
+* a **dedicated extensions button on the navigation bar**, extension popups floating over the page,
+  an extension sidebar, resizable popups;
+* a tile-based new-tab page, swipe-up to reveal the address bar, AMOLED dark + "darken websites".
+
+Implications for this branch:
+
+* the 5-column tile grid here is a **plausible one-menu answer**, not a Lemur replica. The sheet
+  layout, the hand-drawn icon set and the 5×2 arrangement came from
+  `android-helium-browser`'s implementation, i.e. from one developer's reading of Lemur;
+* if fidelity matters, priority should shift to **bottom toolbar + always-on** and a **dedicated
+  extension entry point** before polishing the sheet. `android-helium-browser` has no such patches;
+  `Facilitat-dev/kiwi-browser` does (`patches/m153/0014`–`0018`);
+* keeping the sheet model-list driven was the right call either way: it re-skins whatever menu the
+  delegate produces, so it can be demoted to an optional skin without touching the rest.
+
 ## Status / known gaps
 
 * The Java in this branch is **not compile-verified in this repository** — `src.next` is a
