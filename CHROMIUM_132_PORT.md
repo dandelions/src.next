@@ -98,15 +98,32 @@ on the 132 base:
 * `AppMenuPropertiesDelegateImpl` gained `getMenuItemsForMenu(...)` next to `getMenuItems(...)`
   (1 401 lines at 132);
 * the whole extensions story changed: Chromium 127+ disables **Manifest V2**, which is Kiwi's main
-  selling point (`AppMenuBridge.getRunningExtensions`, MV2 uBlock Origin). This is a product-level
-  blocker, not a merge conflict.
+  selling point (`AppMenuBridge.getRunningExtensions`, MV2 uBlock Origin). It is not a merge
+  conflict, but it looked like a product-level blocker — see the note below for why it is smaller
+  than it first appeared.
+
+### The MV2 blocker is smaller than it looks
+
+`Facilitat-dev/kiwi-browser` (a Kiwi-lineage rebuild on Chromium 153.0.8010.39) ships
+`patches/m153/0001-mv2-reenable.patch`: 13 lines, one file, `extensions/browser/manifest_v2_util.cc`,
+where `IsExtensionAffected()` returns `false` unconditionally instead of flagging MV2 extensions as
+deprecated. Its `0003` patch (27 lines) similarly fixes the phone-form-factor crash where
+`getExtensionsToolbarCoordinator()` returns null, by falling back to `chrome://extensions`.
+
+So MV2 does not decide the port. What it costs: you take ownership of the deprecation policy and
+have to follow MV2 security guidance yourself.
+
+Reimplement both changes from the described behaviour rather than copying the patch text — that
+repository is BSD-3-Clause, but `patches/legacy-kiwi/` inside it is GPL-3.0 and its own NOTICE says
+not to mix that into a BSD-only tree.
 
 ## Verdict
 
 * **Yes, a 132 port is mechanically possible** — the base exists, the rebase chain exists, 98 % of
   paths survive, and the conflict count is small (166 files).
 * **No, it is not a one-afternoon rebase** — expect a compile-fix campaign over the 8 121
-  auto-merged files, with the extension (MV2) removal as the biggest open question.
+  auto-merged files. MV2 is recoverable with a ~13-line patch, so extensions are no longer the
+  deciding factor; the deciding factor is the API drift across 27 milestones.
 * The Lemur UI port itself is *not* the problem; see below.
 
 ## Lemur UI on 132 — already validated at patch level
