@@ -5,27 +5,34 @@ what was measured and what the porting recipe is, so the work does not have to b
 
 Measured on 2025-10-26 against `kiwibrowser/src.next`.
 
-## "But upstream is on 137?" — no source for it
+## "But upstream is on 137?" — no, it is 105 with a 137 label
 
-The number **137.0.7337.0** is the *version of the last shipped Kiwi Next binary*, not a public
-source baseline. Verified on 2025-10-26:
+Release `14310011181` (2025-04-07, the "latest published version" the README links to) is titled
+**"Version 137.0.7337.0"** — but the engine behind it is Chromium **105**. Checked on 2025-10-26:
 
 | check | result |
 | --- | --- |
+| source at tag `14310011181` (`32dfc33`) | `CHROMIUM_VERSION` = **105.0.5195.24**, `KIWI_VERSION` = **105.0.5195.33** |
+| the same release body | "Updated the version (resolves *App not installed* during upgrade)" and "Updated the **user-agent to a future user-agent** to prevent websites from nagging about Chromium version" |
+| real Chromium builds for those milestones (chromiumdash, Stable/Android) | 124 → `124.0.6367.x`, 132 → `132.0.6834.x`, 137 → `137.0.7151.x` |
+| what Kiwi claimed | 124 → `124.0.**6327**.x`, 132 → `132.0.**6961**.0`, 137 → `137.0.**7337**.0` — none of these builds exist |
 | all refs of `kiwibrowser/src.next` containing `137` | **none** |
 | branches | `kiwi` (105 delta), `chromium` (132 mirror, 2025-01-20), `chromium_132.0.6834.83`, one dependabot branch |
 | `chromium` branch HEAD | `c4ac1ae` — `[Chromium] Update version 107.0.5304.17 to 132.0.6834.83`, 2025-01-20 |
-| `kiwi` branch HEAD | `7be7edd` — README/deprecation only, 2025-04-08 |
-| README's "latest published version" tag `14310011181` | `CHROMIUM_VERSION` = **105.0.5195.24** |
 | `kiwibrowser` account repos | `src.next` is the only browser source repo; nothing on 137 |
 
-So the public source stopped at a 105 delta over a 132 mirror, while the **binary** releases went
-further. Nobody forked "137" wrongly: there is nothing to fork. Forks of `src.next` that are not on
-105 either mirror 132 or are independent revivals — not official Kiwi:
+So from the 124 release onwards the version string and the UA were bumped forward while the engine
+stayed at 105 — the 137 release notes say as much ("Kiwi will no longer receive engine updates").
+The build numbers also give it away: the 132 mirror branch is named after the **real** build
+`132.0.6834.83`, while the 132 *release* claimed `132.0.6961.0`. Nobody forked "137" wrongly:
+there is no 137 source to fork, only a relabelled 105 build.
+
+Forks of `src.next` that are not on 105 either mirror 132 or are independent revivals — not official
+Kiwi:
 
 | repo | `CHROMIUM_VERSION` | note |
 | --- | --- | --- |
-| `BigRay1337/kiwi-browser-extension` | 137.0.7337.0 | its README states 137.0.7337.0 is the final *published* Kiwi Next release |
+| `BigRay1337/kiwi-browser-extension` | 137.0.7337.0 | metadata-only repo; repeats the 137 label, no source tree |
 | `raihanbhaii/kiwi-reborn` | 148.0.7778.96 | independent revival |
 | `danosito/afterbird` | 151.0.7922.38 | independent revival |
 | `Facilitat-dev/kiwi-browser` | 153.0.8010.39 | "Kiwi lineage, Afterbird engine", has `cursor/lemur-*` branches |
