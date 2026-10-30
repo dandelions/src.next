@@ -759,7 +759,7 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
             // of our control, so we have to disable StrictMode to work. See
             // https://crbug.com/639352.
             try (StrictModeContext ignored = StrictModeContext.allowDiskWrites()) {
-                SharedPreferencesManager.getInstance().writeBooleanUnchecked("is_tablet", DeviceFormFactor.isTablet());
+                SharedPreferencesManager.getInstance().writeBooleanUnchecked("is_tablet", isTablet());
                 TraceEvent.begin("setContentView(R.layout.main)");
                 if (ContextUtils.getAppSharedPreferences().getBoolean("enable_bottom_toolbar", false)) {
                     setContentView(R.layout.main_bottombar);
@@ -3092,14 +3092,25 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
         super.onNightModeStateChanged();
     }
 
+    @Override
+    public boolean isTablet() {
+        if (getResources() != null && getResources().getConfiguration() != null
+                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return false;
+        }
+        return super.isTablet();
+    }
+
     @VisibleForTesting
     public boolean didChangeTabletMode() {
         assert mConfig
                 != null : "Can not determine the tablet mode when mConfig is not initialized";
         int smallestWidth = getCurrentSmallestScreenWidth(this);
-        boolean isTablet = smallestWidth >= DeviceFormFactor.MINIMUM_TABLET_WIDTH_DP;
-        boolean wasTablet =
-                mConfig.smallestScreenWidthDp >= DeviceFormFactor.MINIMUM_TABLET_WIDTH_DP;
+        boolean wasTablet = mConfig.smallestScreenWidthDp >= DeviceFormFactor.MINIMUM_TABLET_WIDTH_DP
+                && mConfig.orientation != Configuration.ORIENTATION_LANDSCAPE;
+        boolean isTablet = smallestWidth >= DeviceFormFactor.MINIMUM_TABLET_WIDTH_DP
+                && (getResources() == null || getResources().getConfiguration() == null
+                        || getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE);
         return wasTablet != isTablet;
     }
 

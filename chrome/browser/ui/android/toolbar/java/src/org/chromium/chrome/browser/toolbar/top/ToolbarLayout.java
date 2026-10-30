@@ -6,6 +6,7 @@ package org.chromium.chrome.browser.toolbar.top;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -574,6 +575,10 @@ public abstract class ToolbarLayout
      * @return The height of the tab strip. Return 0 for toolbars that do not have a tabstrip.
      */
     protected int getTabStripHeight() {
+        if (getResources() != null && getResources().getConfiguration() != null
+                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return 0;
+        }
         return getResources().getDimensionPixelSize(R.dimen.tab_strip_height);
     }
 

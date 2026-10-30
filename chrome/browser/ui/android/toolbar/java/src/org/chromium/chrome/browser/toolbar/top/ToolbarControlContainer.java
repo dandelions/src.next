@@ -5,6 +5,7 @@
 package org.chromium.chrome.browser.toolbar.top;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
@@ -58,7 +59,12 @@ public class ToolbarControlContainer extends OptimizedFrameLayout implements Con
      */
     public ToolbarControlContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mTabStripHeight = context.getResources().getDimension(R.dimen.tab_strip_height);
+        if (context.getResources() != null && context.getResources().getConfiguration() != null
+                && context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mTabStripHeight = 0;
+        } else {
+            mTabStripHeight = context.getResources().getDimension(R.dimen.tab_strip_height);
+        }
     }
 
     @Override
